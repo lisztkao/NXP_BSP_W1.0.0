@@ -1,0 +1,94 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+DriverVer= ; stampinf will fill in driver version
+CatalogFile=imxi2c.cat ; VS requirement to have catalog file entry
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+; ================= Class section =====================
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+imxi2c.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%imxi2c.0001.DeviceDesc%=imx8m_i2c_Device, ACPI\VEN_NXP&DEV_0104&REV_0001
+%imxi2c.DeviceDesc%=imx_i2c_Device, ACPI\NXP0104
+
+[imx_i2c_Device.NT]
+CopyFiles=Drivers_Dir
+
+[imx8m_i2c_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+imxi2c.sys
+
+;-------------- Service installation
+[imx_i2c_Device.NT.Services]
+AddService = imxi2c,%SPSVCINST_ASSOCSERVICE%, imxi2c_Service_Inst
+
+[imx8m_i2c_Device.NT.Services]
+AddService = imxi2c,%SPSVCINST_ASSOCSERVICE%, imxi2c_Service_Inst
+
+; -------------- imxi2c driver install sections
+[imxi2c_Service_Inst]
+DisplayName    = %imxi2c.SvcDesc%
+ServiceType    = 1 ; SERVICE_KERNEL_DRIVER
+StartType      = 3 ; SERVICE_DEMAND_START
+ErrorControl   = 1 ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\imxi2c.sys
+Dependencies   = SpbCx
+
+[imx_i2c_Device.NT.HW]
+Addreg=imx_i2c_Device.NT.HW.AddReg
+
+[imx8m_i2c_Device.NT.HW]
+Addreg=imx8m_i2c_Device.NT.HW.AddReg
+
+[imx_i2c_Device.NT.HW.AddReg]
+HKR,,Use Interrupt Mode,0x10001,0 ; 0- default mode is not using interrupts
+HKR,,Peripheral Clock kHz,0x10001,66000
+HKR,,Module Clock kHz,0x10001,66000
+
+[imx8m_i2c_Device.NT.HW.AddReg]
+HKR,,Use Interrupt Mode,0x10001,0 ; 0- default mode is not using interrupts
+HKR,,Peripheral Clock kHz,0x10001,25000
+HKR,,Module Clock kHz,0x10001,25000
+
+[imx_i2c_Device.NT.Wdf]
+KmdfService =  imxi2c, imxi2c_wdfsect
+
+[imx8m_i2c_Device.NT.Wdf]
+KmdfService =  imxi2c, imxi2c_wdfsect
+
+[imxi2c_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+imxi2c.DeviceDesc            = "i.MX I2C Controller"
+imxi2c.0001.DeviceDesc       = "i.MX I2C Controller"
+imxi2c.SvcDesc               = "i.MX I2C Controller Service"
+
+SPSVCINST_ASSOCSERVICE= 0x00000002
+
+DiskName = "i.MX I2C Controller Installation Disk"

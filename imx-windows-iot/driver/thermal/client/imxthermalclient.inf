@@ -1,0 +1,65 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+CatalogFile=imxthermalclient.cat
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+imxthermalclient.sys  = 1,,
+
+;********************************************
+; Install section
+;********************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%imxthermalclient.DeviceDesc% = imxthermalclient_Device, ACPI\NXP0115
+
+[imxthermalclient_Device.NT]
+CopyFiles=imxthermalclient_Device_Drivers
+
+[imxthermalclient_Device.NT.HW]
+AddReg=imxthermalclient_Device.NT.AddReg
+
+[imxthermalclient_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system
+
+[imxthermalclient_Device_Drivers]
+imxthermalclient.sys
+
+;-------------- Service installation
+
+[imxthermalclient_Device.NT.Services]
+AddService = imxthermalclient,%SPSVCINST_ASSOCSERVICE%,imxthermalclient_Service_Inst
+
+; -------------- imxthermalclient driver install sections
+
+[imxthermalclient_Service_Inst]
+DisplayName    = %imxthermalclient.SvcDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\imxthermalclient.sys
+
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+imxthermalclient.DeviceDesc  = "i.MX Thermal Client Device"
+imxthermalclient.SvcDesc     = "i.MX Thermal Client Device Service"
+
+SPSVCINST_ASSOCSERVICE= 0x00000002
+DiskId1 = "Thermal Client Installation Disk #1"

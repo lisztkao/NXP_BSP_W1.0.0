@@ -1,0 +1,145 @@
+/*++
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*
+*  This program and the accompanying materials
+*  are licensed and made available under the terms and conditions of the BSD License
+*  which accompanies this distribution.  The full text of the license may be found at
+*  http://opensource.org/licenses/bsd-license.php
+*
+*  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+Module Name:
+
+  Pptt.aslc
+
+Abstract:
+
+  NXP i.MX8M Processor Property Topology Table
+  Reference: https://uefi.org/sites/default/files/resources/ACPI%206_2_A_Sept29.pdf
+
+Environment:
+
+  Firmware UEFI ACPI 6.2.
+
+Revision History:
+
+--*/
+
+#include "iMX8.h"
+#include "iMX8Platform.h"
+
+#include <Library/AcpiLib.h>
+#include <IndustryStandard/Acpi.h>
+
+#pragma pack(push, 1)
+
+// PPTT structure for this platform
+typedef struct {
+  EFI_ACPI_DESCRIPTION_HEADER CsrtHeader;
+  EFI_ACPI_6_2_PPTT_STRUCTURE_PROCESSOR ProcessorTopology[ 1 + FixedPcdGet32(PcdCoreCount) ];
+} EFI_ACPI_PPTT_TABLE;
+
+#pragma pack(pop)
+
+EFI_ACPI_PPTT_TABLE Pptt =
+{
+  // PPTT Header
+  {
+    EFI_ACPI_6_2_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE,  // Signature "PPTT"
+    sizeof(EFI_ACPI_PPTT_TABLE),                        // Length
+    EFI_ACPI_6_2_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_REVISION, // Revision
+    0x00,                                               // Checksum calculated at runtime
+    EFI_ACPI_OEM_ID,                                    // OEMID is a 6 bytes long field
+    EFI_ACPI_OEM_TABLE_ID,                              // OEM table identification (8 bytes long)
+    EFI_ACPI_OEM_REVISION,                              // OEM revision number
+    EFI_ACPI_CREATOR_ID,                                // ASL compiler vendor ID
+    EFI_ACPI_CREATOR_REVISION,                          // ASL compiler revision number
+  },
+  // ProcessorTopology
+  {
+    // Physical Package Node
+    {
+      EFI_ACPI_6_2_PPTT_TYPE_PROCESSOR,                   // Type
+      sizeof (EFI_ACPI_6_2_PPTT_STRUCTURE_PROCESSOR),     // Length
+      { 0, 0 },                                           // Reserved
+      {
+        1,                                                // PhysicalPackage
+        0,                                                // AcpiProcessorIdValid
+        0,                                                // Reserved
+      },
+      0x00000000,                                         // Parent
+      0x00000000,                                         // AcpiProcessorId
+      0x00000000,                                         // NumberOfPrivateResources
+    },
+
+// TODO: include cache descriptors
+  
+    // Core 0
+    {
+      EFI_ACPI_6_2_PPTT_TYPE_PROCESSOR,                   // Type
+      sizeof (EFI_ACPI_6_2_PPTT_STRUCTURE_PROCESSOR),     // Length
+      { 0, 0 },                                           // Reserved
+      {
+        0,                                                // PhysicalPackage
+        1,                                                // AcpiProcessorIdValid
+        0,                                                // Reserved
+      },
+      OFFSET_OF (EFI_ACPI_PPTT_TABLE, ProcessorTopology), // Parent
+      0x00000000,                                         // AcpiProcessorId
+      0x00000000,                                         // NumberOfPrivateResources
+    },
+    
+  #if FixedPcdGet32(PcdCoreCount) > 1
+    // Core 1
+    {
+      EFI_ACPI_6_2_PPTT_TYPE_PROCESSOR,                   // Type
+      sizeof (EFI_ACPI_6_2_PPTT_STRUCTURE_PROCESSOR),     // Length
+      { 0, 0 },                                           // Reserved
+      {
+        0,                                                // PhysicalPackage
+        1,                                                // AcpiProcessorIdValid
+        0,                                                // Reserved
+      },
+      OFFSET_OF (EFI_ACPI_PPTT_TABLE, ProcessorTopology), // Parent
+      0x00000001,                                         // AcpiProcessorId
+      0x00000000,                                         // NumberOfPrivateResources
+    },
+  #endif
+  #if FixedPcdGet32(PcdCoreCount) > 2
+    // Core 2
+    {
+      EFI_ACPI_6_2_PPTT_TYPE_PROCESSOR,                   // Type
+      sizeof (EFI_ACPI_6_2_PPTT_STRUCTURE_PROCESSOR),     // Length
+      { 0, 0 },                                           // Reserved
+      {
+        0,                                                // PhysicalPackage
+        1,                                                // AcpiProcessorIdValid
+        0,                                                // Reserved
+      },
+      OFFSET_OF (EFI_ACPI_PPTT_TABLE, ProcessorTopology), // Parent
+      0x00000002,                                         // AcpiProcessorId
+      0x00000000,                                         // NumberOfPrivateResources
+    },
+    
+    // Core 3
+    {
+      EFI_ACPI_6_2_PPTT_TYPE_PROCESSOR,                   // Type
+      sizeof (EFI_ACPI_6_2_PPTT_STRUCTURE_PROCESSOR),     // Length
+      { 0, 0 },                                           // Reserved
+      {
+        0,                                                // PhysicalPackage
+        1,                                                // AcpiProcessorIdValid
+        0,                                                // Reserved
+      },
+      OFFSET_OF (EFI_ACPI_PPTT_TABLE, ProcessorTopology), // Parent
+      0x00000003,                                         // AcpiProcessorId
+      0x00000000,                                         // NumberOfPrivateResources
+    },
+  #endif
+  }
+};
+
+// Reference the table being generated to prevent the optimizer from removing the
+// data structure from the executable
+VOID* CONST ReferenceAcpiTable = &Pptt;

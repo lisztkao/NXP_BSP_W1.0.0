@@ -1,0 +1,76 @@
+##
+# CI configuration for UefiTestingPkg
+#
+# Copyright (c) Microsoft Corporation
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+{
+    ## options defined ci/Plugin/CompilerPlugin
+    "CompilerPlugin": {
+        "DscPath": ""
+    },
+
+    ## options defined ci/Plugin/CharEncodingCheck
+    "CharEncodingCheck": {
+        "IgnoreFiles": []
+    },
+
+    ## options defined ci/Plugin/DependencyCheck
+    "DependencyCheck": {
+        "AcceptableDependencies": [
+            "MdePkg/MdePkg.dec",
+            "MdeModulePkg/MdeModulePkg.dec",
+            "UefiTestingPkg/UefiTestingPkg.dec",
+            "XmlSupportPkg/XmlSupportPkg.dec",
+            "UefiCpuPkg/UefiCpuPkg.dec",
+            "SecurityPkg/SecurityPkg.dec",
+            "UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec",
+            "IntelSiliconPkg/IntelSiliconPkg.dec" #this is bad layering.  Need to fix.
+        ],
+        "AcceptableDependencies-HOST_APPLICATION":[ # for host based unit tests
+            "UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec"
+        ],
+        "AcceptableDependencies-UEFI_APPLICATION": [
+            "UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec",
+            "ShellPkg/ShellPkg.dec"
+        ],
+        "IgnoreInf": []
+    },
+
+    ## options defined ci/Plugin/DscCompleteCheck
+    "DscCompleteCheck": {
+        "IgnoreInf": [],
+        "DscPath": ""
+    },
+
+    ## options defined ci/Plugin/GuidCheck
+    "GuidCheck": {
+        "IgnoreGuidName": [],
+        "IgnoreGuidValue": [],
+        "IgnoreFoldersAndFiles": [],
+        "IgnoreDuplicates": []
+    },
+
+    ## options defined ci/Plugin/LibraryClassCheck
+    "LibraryClassCheck": {
+        "IgnoreLibraryClass": [],
+        "IgnoreHeaderFile": []
+    },
+
+    ## options defined ci/Plugin/SpellCheck
+    "SpellCheck": {
+        # Fails test but run in AuditOnly mode to collect log
+        "AuditOnly": TRUE,
+        "IgnoreStandardPaths": [     # Standard Plugin defined paths that should be ignore
+        ],
+        "IgnoreFiles": [             # use gitignore syntax to ignore errors in matching files
+        ],
+        "ExtendWords": [           # words to extend to the dictionary for this package
+            "RMRRs",               # DMAProtectionAudit/Windows/Readme.md
+            "Pywin",               # "
+            "musthave",            # VarPolicyUnitTestApp/Readme.md
+            "canthave",            # "
+        ],
+        "AdditionalIncludePaths": [] # Additional paths to spell check relative to package root (wildcards supported)
+    }
+}

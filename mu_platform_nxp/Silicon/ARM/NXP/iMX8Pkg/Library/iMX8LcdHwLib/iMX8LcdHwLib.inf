@@ -1,0 +1,45 @@
+#/** @file
+#
+#  Copyright (c) 2013-2018, ARM Ltd. All rights reserved.
+#  Copyright (c) Microsoft Corporation. All rights reserved.
+#  Copyright 2020 NXP
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x0001001A
+  BASE_NAME                      = iMX8LcdHwLib
+  FILE_GUID                      = bb1fde98-1de2-410e-8850-fdcb8e67ebc0
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = iMX8LcdHwLib
+
+[Sources]
+  iMX8LcdHwLib.c
+  adv7535.c
+  Lcdif.c
+  MipiDsi.c
+
+
+[Packages]
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  iMXPlatformPkg/iMXPlatformPkg.dec
+  iMX8Pkg/iMX8Pkg.dec
+
+[LibraryClasses]
+  iMXI2cLib
+  iMXDisplayLib
+
+[Pcd]
+  giMX8TokenSpaceGuid.PcdDisplayEnable
+  giMX8TokenSpaceGuid.PcdDisplayInterface
+  giMX8TokenSpaceGuid.PcdDisplayI2CBaseAddr

@@ -1,0 +1,193 @@
+NXP Software Content Register
+
+Release - Windows 10 IoT 1.0.0
+April 2022
+
+License file: EULA.txt  NXP Proprietary LA_OPT_NXP_Software_License v34 February 2022 - Additional distribution license granted, Section 2.3 applies
+
+--------------------------------------------
+
+Package:                     ./imx-windows-iot
+Outgoing License:            MIT
+License Files:               ./imx-windows-iot/LICENSE 
+Type of content:             Source code
+Description and comments:    Windows 10 IoT Enterprise for NXP i.MX Processors
+Release Location:            ./imx-windows-iot
+Origin:                      Microsoft (MIT) - https://github.com/ms-iot/imx-iotcore
+
+--------------------------------------------
+
+Package:                     ./imx-atf
+Outgoing License:            BSD-3-Clause 
+License File:                ./imx-atf/license.rst 
+Type of Content:             source
+Description and comments:    ARM Trusted Firmware
+Release Location:            ./imx-atf
+Downloaded from:             https://source.codeaurora.org/external/imx/imx-atf
+Origin:                      NXP (proprietary)
+                             arm-trusted-firmware v1.4 - ARM Limited (BSD-3-Clause) - http://github.com/ARM-software/arm-trusted-firmware/ 
+
+--------------------------------------------
+
+Package:                     ./imx-mkimage
+Outgoing License:            GPL-2.0 
+License File:                ./imx-mkimage/COPYING
+Type of Content:             source
+Description and comments:    Make Image BootLoader (independent SW package, aggregated into this release, modified by NXP, distributed under GPL license) 
+Release Location:            ./imx-mkimage
+Downloaded from:             https://source.codeaurora.org/external/imx/imx-mkimage
+Origin:                      NXP (GPL-2.0)
+                             Das U-Boot - Universal Bootloader (GPL-2.0+) - http://www.denx.de/wiki/U-Boot/WebHome
+ 
+--------------------------------------------
+ 
+Package:                     ./imx-optee-os
+Outgoing License:            BSD-2-Clause, BSD-3-Clause 
+License File:                ./imx-optee_os/LICENSE  
+Type of Content:             source
+Description and comments:    Open Portable Trusted Execution Environment for Linux on ARM
+Release Location:            ./imx-optee-os
+Downloaded from:             https://source.codeaurora.org/external/imx/imx-optee-os
+Origin:                      Linaro (BSD-2-Clause, BSD-3-Clause) 
+                             OP-TEE Trusted OS (BSD-2-Clause) - https://github.com/OP-TEE/optee_os
+
+--------------------------------------------
+
+Package:                     ./mu-platform-nxp
+Outgoing License:            BSD-2-Clause 
+License File:                ./mu-platform-nxp/README.md
+Type of Content:             source
+Description and comments:    Project MU
+Release Location:            ./mu-platform-nxp
+Origin:                      Microsoft (BSD-2-Clause) - https://microsoft.github.io/mu/
+
+--------------------------------------------
+
+Package:                     .mu_platform_nxp/MU_BASECORE
+Outgoing License:            BSD-2-Clause 
+License File:                .mu_platform_nxp/MU_BASECORE/License.txt
+Type of Content:             source
+Description and comments:    Project MU
+Release Location:            .mu_platform_nxp/MU_BASECORE
+Origin:                      Microsoft (BSD-2-Clause) - https://github.com/Microsoft/mu_basecore
+--------------------------------------------  
+
+Package:                     .mu_platform_nxp/Common/MU
+Outgoing License:            BSD-2-Clause 
+License File:                .mu_platform_nxp/Common/MU/License.txt
+Type of Content:             source
+Description and comments:    Project MU
+Release Location:            .mu_platform_nxp/Common/MU
+Origin:                      Microsoft (BSD-2-Clause) - https://github.com/Microsoft/mu_plus
+
+--------------------------------------------  
+
+Package:                     .mu_platform_nxp/Common/MU_TIANO
+Outgoing License:            BSD-2-Clause 
+License File:                .mu_platform_nxp/Common/MU_TIANO/License.txt
+Type of Content:             source
+Description and comments:    Project MU
+Release Location:            .mu_platform_nxp/Common/MU_TIANO
+Origin:                      Microsoft (BSD-2-Clause) - https://github.com/Microsoft/mu_silicon_arm_tiano
+
+--------------------------------------------  
+
+Package:                     .mu_platform_nxp/Common/MU_OEM_SAMPLE
+Outgoing License:            BSD-2-Clause 
+License File:                .mu_platform_nxp/Common/MU_OEM_SAMPLE/License.txt
+Type of Content:             source
+Description and comments:    Project MU
+Release Location:            .mu_platform_nxp/Common/MU_OEM_SAMPLE
+Origin:                      Microsoft (BSD-2-Clause) - https://github.com/Microsoft/mu_silicon_arm_tiano
+
+--------------------------------------------  
+
+Package:                     .mu_platform_nxp/Silicon/ARM/MU_TIANO
+Outgoing License:            BSD-2-Clause 
+License File:                .mu_platform_nxp/Silicon/ARM/MU_TIANO/License.txt
+Type of Content:             source
+Description and comments:    Project MU
+Release Location:            .mu_platform_nxp/Silicon/ARM/MU_TIANO
+Origin:                      Microsoft (BSD-2-Clause) - https://github.com/Microsoft/mu_silicon_arm_tiano
+
+--------------------------------------------  
+
+Package:                     ./MSRSec
+Outgoing License:            MIT
+License File:                ./MSRSec/LICENSE
+Type of Content:             source
+Description and comments:    Microsoft Research Security TAs
+Release Location:            ./MSRSec
+Downloaded from:             https://github.com/Microsoft/MSRSec
+Origin:                      Microsoft (MIT) - https://github.com/Microsoft/MSRSec
+
+--------------------------------------------
+
+Package:                     ./RIoT
+Outgoing License:            MIT 
+License File:                ./RIoT/LICENSE 
+Type of Content:             source
+Description and comments:    Robust Internet of Things
+Release Location:            ./RIoT
+Downloaded from:             url = https://github.com/Microsoft/RIoT.git
+Origin:                      Microsoft (MIT) - https://github.com/Microsoft/RIoT.git 
+
+--------------------------------------------
+
+Package:                     ./uboot-imx
+Outgoing License:            GPL-2.0 
+License File:                ./uboot-imx/Licenses/
+Type of Content:             source
+Description and comments:    Bootloader with i.MX-specific capabilities (independent SW package, aggregated into this release, modified by NXP, distributed under GPL license)
+Release Location:            ./uboot-imx
+Downloaded from:             https://source.codeaurora.org/external/imx/uboot-imx
+Origin:                      NXP (GPL-2.0)
+                             Das U-Boot - Universal Bootloader (GPL-2.0+) - http://www.denx.de/wiki/U-Boot/WebHome 
+                             Android Open Source Project (BSD-2-Clause) - https://source.android.com/
+                             zlib (zlib license) - http://www.zlib.net/
+
+--------------------------------------------  
+
+Package:                     ./imx-windows-iot/driver/video/imx-vpu-hantro
+Outgoing License:            LA_OPT_NXP_Software_License v34 February 2022 - Additional distribution license granted, Section 2.3 applies
+License Files:               EULA.txt
+Type of content:             Source code
+Description and comments:    i.MX VPU library
+Release Location:            ./imx-windows-iot/driver/video/imx-vpu-hantro
+Origin: 		      VeriSilicon Inc. (proprietary)
+                             The WebM project by Google Inc. (BSD-3-clause) https://bugs.chromium.org/p/webm/issues/list -- decoder_sw/software/source/vp9/; decoder_sw/software/test/common/vpxfilereader.c; decoder_sw/software/test/vp8/vp8filereader.c
+                             MD5 - Command Line Mesage Digest Utility by Colin Plumb (Public Domain) http://www.fourmilab.ch/md5/ -- decoder_sw/software/test/common/swhw/md5.c&h
+                             Khronos Group - OpenMAX (version?) (MIT) https://www.khronos.org/openmax/ -- openmax_il/headers/
+
+--------------------------------------------
+
+Package:                     ./imx-windows-iot/driver/video/imx-vpuwrap
+Outgoing Outgoing License:   LA_OPT_NXP_Software_License v34 February 2022 - Additional distribution license granted, Section 2.3 applies
+License File:                EULA.txt
+Type of content:             Source code
+Description and comments:    i.MX VPU wrapper library
+Release Location:            ./imx-windows-iot/driver/video/imx-vpuwrap
+Origin:                      NXP (proprietary)
+                             Freescale Semiconductor, Inc. (proprietary)
+                             sqlite (Public Domain) - http://www.hwaci.com/sw/sqlite/index.html
+
+--------------------------------------------
+
+Package:                     imx-gpu-viv-6.4.3.p2.2-aarch64.bin
+Version:                     6.4.3.p2.2
+Outgoing                     LA_OPT_NXP_Software_License v34 February 2022 - Additional distribution license granted, Section 2.3 applies
+License File:                EULA.txt
+Package Category:            Graphics
+Type of Content:             binary
+Description and comments:    GPU Core IP in binary
+Release Location:            ./IoTEntOnNXP/drivers/Galcore
+Origin:                      NXP (proprietary)
+                             Verisilicon (formerly Vivante Corp.) (proprietary)
+                             opengleskul (MIT) - https://code.google.com/archive/p/opengleskul/
+                             The Khronos Group Inc. (MIT) - http://www.khronos.org/opencl/
+                             Mesa3D - Mesa Lib [GL3ext header] (SGI-B-2.0) - http://mesa3d.sourceforge.net/
+                             libdri (MIT) - http://dri.freedesktop.org/wiki/
+                             The Android Open Source Project (Apache-2.0) - https://source.android.com/
+                             LLVM Compiler (BSD-3-clause) - https://github.com/prof123/llvm/
+
+--------------------------------------------

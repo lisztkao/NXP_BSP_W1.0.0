@@ -1,0 +1,84 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+CatalogFile=imxtmu.cat
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+imxtmu.sys  = 1,,
+
+;*****************************************
+; Install section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%imxtmu.DeviceDesc% = imxtmu_Device, ACPI\NXP010B
+
+[imxtmu_Device.NT]
+CopyFiles=imxtmu_Device_Drivers
+AddPowerSetting=Temperature_Power_Setting
+
+[imxtmu_Device.NT.HW]
+AddReg=imxtmu_Device.NT.AddReg
+
+[imxtmu_Device.NT.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100         ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)"      ; Allow generic-all access to Built-in administrators and Local system
+
+[imxtmu_Device_Drivers]
+imxtmu.sys
+
+;-------------- Service installation
+
+[imxtmu_Device.NT.Services]
+AddService = imxtmu,%SPSVCINST_ASSOCSERVICE%,imxtmu_Service_Inst
+
+; -------------- imxtmu driver install sections
+
+[imxtmu_Service_Inst]
+DisplayName    = %imxtmu.SvcDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\imxtmu.sys
+
+[Temperature_Power_Setting]
+SubGroup = {7D54AE13-7A01-469d-8AF3-6FF4662C5371}
+Setting = {FCB15302-14A9-4bf8-8A0B-888E0D33BEDE}, "Machine Temperature", "Specify the temperature of the system."
+ValueRange = 1, 10000, 1, "Tenths of degrees Kelvin"
+
+; Max Power savings, AC
+Default = {A1841308-3541-4FAB-BC81-F71556F20B4A}, 0, 1
+; Max Power savings, DC
+Default = {A1841308-3541-4FAB-BC81-F71556F20B4A}, 1, 1
+; No power savings, AC
+Default = {8C5E7FDA-E8BF-4A96-9A85-A6E23A8C635C}, 0, 1 
+; No power savings, DC
+Default = {8C5E7FDA-E8BF-4A96-9A85-A6E23A8C635C}, 1, 1
+; Balanced Laptop performance, AC
+Default = {381B4222-F694-41F0-9685-FF5BB260DF2E}, 0, 1
+; Balanced Laptop performance, DC
+Default = {381B4222-F694-41F0-9685-FF5BB260DF2E}, 1, 1
+
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+imxtmu.DeviceDesc            = "i.MX Thermal Sensor Device"
+imxtmu.SvcDesc               = "i.MX Thermal Sensor Service"
+
+SPSVCINST_ASSOCSERVICE= 0x00000002
+DiskId1 = "Thermal Sensor Installation Disk #1"

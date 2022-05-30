@@ -1,0 +1,151 @@
+/** @file
+*
+*  Copyright (c) 2018 Microsoft Corporation. All rights reserved.
+*  Copyright 2019-2020 NXP
+*
+*  This program and the accompanying materials
+*  are licensed and made available under the terms and conditions of the BSD License
+*  which accompanies this distribution.  The full text of the license may be found at
+*  http://opensource.org/licenses/bsd-license.php
+*
+*  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+*
+**/
+
+#include <Platform.h>
+
+#include <IndustryStandard/MemoryMappedConfigurationSpaceAccessTable.h>
+
+#include <iMX8Platform.h>
+#include <iMX8PciExpress.h>
+#include <Library/PcdLib.h>
+
+#define EFI_ACPI_OEM_MCFG_REVISION 0x00000001
+
+// Size in bytes a single bus consumes in ECAM space
+// Configuration size = 4K
+// Max device = 32
+// Max function = 8
+// Max bus size = 4K * 32 * 8
+#define ECAM_BUS_ADDR_SIZE      (1 << 20)
+
+// Provide 2 differenct base PCI space address. The first list would represent
+// the host config space and the second list would be the device config space.
+// Windows is expected to be able to parse the information.
+#if (FixedPcdGet32(PcdPcie1Enable) && FixedPcdGet32(PcdPcie1SwitchSupport))
+  #define NUM_PCI1 3
+#elif FixedPcdGet32(PcdPcie1Enable)
+  #define NUM_PCI1 2
+#else
+  #define NUM_PCI1 0
+#endif
+#if (FixedPcdGet32(PcdPcie2Enable) && FixedPcdGet32(PcdPcie2SwitchSupport))
+  #define NUM_PCI2 3
+#elif FixedPcdGet32(PcdPcie2Enable)
+  #define NUM_PCI2 2
+#else
+  #define NUM_PCI2 0
+#endif
+
+// MCFG structure
+// PCI Firmware specification Table 4-2
+#pragma pack(push, 1)
+
+typedef struct {
+  EFI_ACPI_DESCRIPTION_HEADER Header;
+  UINT64                      Reserved;
+#if (FixedPcdGet32(PcdPcie1Enable) || FixedPcdGet32(PcdPcie2Enable))
+  EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE AllocationStructure[NUM_PCI1 + NUM_PCI2];
+#else
+  EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE AllocationStructure[1];
+#endif
+} EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_SPACE_ACCESS_DESCRIPTION_TABLE;
+
+#pragma pack(pop)
+
+//
+// Multiple APIC Description Table
+//
+STATIC EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_SPACE_ACCESS_DESCRIPTION_TABLE Mcfg = {
+  {
+    EFI_ACPI_5_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
+    sizeof (EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_SPACE_ACCESS_DESCRIPTION_TABLE),
+    EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_SPACE_ACCESS_TABLE_REVISION,
+    0x00,                           // Checksum will be updated at runtime
+    EFI_ACPI_OEM_ID,                // OEMID
+    EFI_ACPI_OEM_TABLE_ID,          // OEM Table ID
+    EFI_ACPI_OEM_MCFG_REVISION,     // OEM Revision
+    EFI_ACPI_CREATOR_ID,            // Creator ID
+    EFI_ACPI_CREATOR_REVISION,      // Creator revision
+  },
+  0x00,                             // Reserved
+
+  // Root Port and device ECAM spaces are disjoint. Therefore we need two entries
+  {
+#if FixedPcdGet32(PcdPcie1Enable)
+    // PCIe Host
+    {
+      PCIE1_HOST_CONFIG_BASE_REG,       // PCIE Host Config Base Address
+      0x00,                             // PciSegmentGroupNumber (_SEG)
+      0x00,                             // StartBusNumber
+      0x00,                             // EndBusNumber
+      0x00000000                        // Reserved
+    },
+    // PCIe Device
+    {
+      PCIE1_DEVICE_CONFIG0_BASE_REG - ECAM_BUS_ADDR_SIZE, // BaseAddress
+                                         // Note: Need to subtract ECAM_BUS_ADDR_SIZE
+                                         //   since bus range starts at 0x1
+      0x00,                              // PciSegmentGroupNumber (_SEG)
+      0x01,                              // StartBusNumber
+      0x01,                              // EndBusNumber
+      0x00000000                         // Reserved
+    },
+#if FixedPcdGet32(PcdPcie1SwitchSupport)
+    // PCIe Device Cfg1: BUS 2 - 7
+    {
+      (PCIE1_DEVICE_CONFIG1_BASE_REG),   // BaseAddress
+      0x00,                              // PciSegmentGroupNumber (_SEG)
+      0x02,                              // StartBusNumber
+      0x07,                              // EndBusNumber
+      0x00000000                         // Reserved
+    },
+#endif
+#endif
+#if FixedPcdGet32(PcdPcie2Enable)
+    // PCIe Host
+    {
+      PCIE2_HOST_CONFIG_BASE_REG,       // PCIE Host Config Base Address
+      0x01,                             // PciSegmentGroupNumber (_SEG)
+      0x00,                             // StartBusNumber
+      0x00,                             // EndBusNumber
+      0x00000000                        // Reserved
+    },
+    // PCIe Device Cfg0: BUS 1
+    {
+      (PCIE2_DEVICE_CONFIG0_BASE_REG - ECAM_BUS_ADDR_SIZE), // BaseAddress
+                                         // Note: Need to subtract ECAM_BUS_ADDR_SIZE
+                                         //   since bus range starts at 0x1
+      0x01,                              // PciSegmentGroupNumber (_SEG)
+      0x01,                              // StartBusNumber
+      0x01,                              // EndBusNumber
+      0x00000000                         // Reserved
+    },
+#if FixedPcdGet32(PcdPcie2SwitchSupport)
+    // PCIe Device Cfg1: BUS 2 - 7
+    {
+      (PCIE2_DEVICE_CONFIG1_BASE_REG),   // BaseAddress
+      0x01,                              // PciSegmentGroupNumber (_SEG)
+      0x02,                              // StartBusNumber
+      0x07,                              // EndBusNumber
+      0x00000000                         // Reserved
+    },
+#endif
+#endif
+  }
+};
+
+// Reference the table being generated to prevent the optimizer from removing the
+// data structure from the executable
+VOID* CONST ReferenceAcpiTable = &Mcfg;

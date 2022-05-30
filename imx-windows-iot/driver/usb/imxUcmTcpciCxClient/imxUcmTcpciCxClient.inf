@@ -1,0 +1,50 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature = "$WINDOWS NT$"
+Class = System
+ClassGuid = {4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider = %ProviderName%
+PnpLockdown = 1
+DriverVer=06/21/2016,10.0.14845.1002
+CatalogFile = imxUcmTcpciCxClient.cat
+
+[SourceDisksNames]
+3426 = windows cd
+
+[SourceDisksFiles]
+imxUcmTcpciCxClient.sys = 3426
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[Manufacturer]
+%ManufacturerName% = imxUcmTcpciCxClient, NT$ARCH$
+
+[imxUcmTcpciCxClient.NT$ARCH$]
+%imxUcmTcpciCxClient.DeviceDesc% = imxUcmTcpciCxClient.Install, ACPI\USBC0001 ; TODO: match this to your device's path.
+
+[imxUcmTcpciCxClient.Install.NT]
+CopyFiles = imxUcmTcpciCxClient.CopyFiles
+
+[imxUcmTcpciCxClient.Install.NT.Services]
+AddService = imxUcmTcpciCxClient, 2, imxUcmTcpciCxClient.AddService
+
+[imxUcmTcpciCxClient.CopyFiles]
+imxUcmTcpciCxClient.sys
+
+[imxUcmTcpciCxClient.AddService]
+DisplayName = %imxUcmTcpciCxClient.SvcDesc%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %13%\imxUcmTcpciCxClient.sys
+Dependencies = UcmTcpciCx
+
+[Strings]
+ProviderName                    = "NXP"
+ManufacturerName                = "NXP Semiconductors"
+imxUcmTcpciCxClient.DeviceDesc  = "i.MX UcmTcpciCx Client Device"
+imxUcmTcpciCxClient.SvcDesc     = "i.MX UcmTcpciCx Client Device Service"

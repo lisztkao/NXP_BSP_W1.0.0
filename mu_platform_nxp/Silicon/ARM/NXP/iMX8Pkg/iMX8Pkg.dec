@@ -1,0 +1,103 @@
+#
+#  Copyright (c) Microsoft Corporation. All rights reserved.
+#  Copyright (c) 2013-2018, ARM Limited. All rights reserved.
+#  Copyright 2019-2020 NXP
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+
+[Defines]
+  DEC_SPECIFICATION              = 0x0001001A
+  PACKAGE_NAME                   = iMX8Pkg
+
+  PACKAGE_GUID                   = 4F3BDBA2-496B-64BB-FAB3-199D81AAE5A2
+  PACKAGE_VERSION                = 0.1
+
+################################################################################
+#
+# Include Section - list of Include Paths that are provided by this package.
+#                   Comments are used for Keywords and Module Types.
+#
+# Supported Module Types:
+#  BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SMM_DRIVER DXE_SAL_DRIVER UEFI_DRIVER UEFI_APPLICATION
+#
+################################################################################
+[Includes.common]
+  Include                        # Root include for the package
+
+[Protocols.common]
+  gEfiSdhcProtocolGuid = { 0x46055b0f, 0x992a, 0x4ad7, { 0x8f, 0x81, 0x14, 0x81, 0x86, 0xff, 0xdf, 0x72 } }
+
+[Guids.common]
+  giMX8TokenSpaceGuid = { 0x4F3BDBA2, 0x496B, 0x64BB, { 0xFA, 0xB3, 0x19, 0x9D, 0x81, 0xAA, 0xE5, 0xA2 } }
+
+[PcdsFeatureFlag.common]
+  giMX8TokenSpaceGuid.PcdPciMaxPayloadFixup|FALSE|BOOLEAN|0x00000004
+
+[PcdsFixedAtBuild.common]
+  # PCIe configuration
+  # PCIe1
+  giMX8TokenSpaceGuid.PcdPcie1Enable|FALSE|BOOLEAN|0x00000005
+  giMX8TokenSpaceGuid.PcdPcie1ControlBaseAddress|0x33800000|UINT64|0x00000006
+  giMX8TokenSpaceGuid.PcdPcie1DeviceMemoryBase|0x18000000|UINT64|0x00000007
+  giMX8TokenSpaceGuid.PcdPcie1DeviceMemorySize|0x07F00000|UINT64|0x00000008
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig0Base|0x1FF00000|UINT64|0x00000009
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig0Size|0x00080000|UINT64|0x0000000A
+  giMX8TokenSpaceGuid.PcdPcie1SwitchSupport|FALSE|BOOLEAN|0x00000021
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig1Base|0x18000000|UINT64|0x00000022
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig1Size|0x00000000|UINT64|0x000000023
+  giMX8TokenSpaceGuid.PcdPcie1InternalRefClock|TRUE|BOOLEAN|0x0000000B
+  giMX8TokenSpaceGuid.PcdPcie1MaxLinkSpeed|2|UINT32|0x0000000C
+  giMX8TokenSpaceGuid.PcdPcie1ResetGpio|FALSE|BOOLEAN|0x0000000D
+  giMX8TokenSpaceGuid.PcdPcie1ResetGpioBankNumber|0|UINT32|0x0000000E
+  giMX8TokenSpaceGuid.PcdPcie1ResetGpioIoNumber|0|UINT32|0x0000000F
+  # PCIe2
+  giMX8TokenSpaceGuid.PcdPcie2Enable|FALSE|BOOLEAN|0x00000010
+  giMX8TokenSpaceGuid.PcdPcie2ControlBaseAddress|0x33C00000|UINT64|0x00000011
+  giMX8TokenSpaceGuid.PcdPcie2DeviceMemoryBase|0x20000000|UINT64|0x00000012
+  giMX8TokenSpaceGuid.PcdPcie2DeviceMemorySize|0x07F00000|UINT64|0x00000013
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig0Base|0x27F00000|UINT64|0x00000014
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig0Size|0x00080000|UINT64|0x00000015
+  giMX8TokenSpaceGuid.PcdPcie2SwitchSupport|FALSE|BOOLEAN|0x00000024
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig1Base|0x20000000|UINT64|0x00000025
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig1Size|0x00000000|UINT64|0x000000026
+  giMX8TokenSpaceGuid.PcdPcie2InternalRefClock|TRUE|BOOLEAN|0x00000016
+  giMX8TokenSpaceGuid.PcdPcie2MaxLinkSpeed|2|UINT32|0x00000017
+  giMX8TokenSpaceGuid.PcdPcie2ResetGpio|FALSE|BOOLEAN|0x0000018
+  giMX8TokenSpaceGuid.PcdPcie2ResetGpioBankNumber|0|UINT32|0x00000019
+  giMX8TokenSpaceGuid.PcdPcie2ResetGpioIoNumber|0|UINT32|0x0000001A
+
+  #
+  giMX8TokenSpaceGuid.PcdUsb1XhciBaseAddress|0x38100000|UINT64|0x0000001B
+  giMX8TokenSpaceGuid.PcdUsb2XhciBaseAddress|0x38200000|UINT64|0x0000001C
+
+  # MaxMode must be one number higher than the actual max mode,
+  # i.e. for actual maximum mode 2, set the value to 3.
+  #
+  # Default value zero allows platform to enumerate maximum supported mode.
+  #
+  # For a list of mode numbers look in HdLcdiMX8.c
+  giMX8TokenSpaceGuid.PcdArmHdLcdMaxMode|0|UINT32|0x0000001D
+
+  # {89464DAE-8DAA-41FE-A4C8-40D2175AF1E9}
+  giMX8TokenSpaceGuid.PcdGraphicsGuid|{0xAE, 0x4D, 0x46, 0x89, 0xAA, 0x8D, 0xFE, 0x41, 0xa4, 0xc8, 0x40, 0xd2, 0x17, 0x5a, 0xf1, 0xe9}|VOID*|0x0000001E
+
+  # Bank of memory above 32bit address space
+  giMX8TokenSpaceGuid.PcdBank1MemoryBase|0|UINT64|0x0000001F
+  giMX8TokenSpaceGuid.PcdBank1MemorySize|0|UINT64|0x00000020
+
+  # Selection of the i.MX8 display interface.
+  #   PcdDisplayEnable      - enable display, default enabled
+  #   PcdDisplayInterface   - default display interface, 0=HDMI, 1=MIPI_DSI
+  #   PcdDisplayI2CBaseAddr - Base address of the I2C block used for cummunication with display, default I2C2 for i.MX8
+  giMX8TokenSpaceGuid.PcdDisplayEnable|TRUE|BOOLEAN|0x00000027
+  giMX8TokenSpaceGuid.PcdDisplayInterface|0|UINT32|0x00000028
+  giMX8TokenSpaceGuid.PcdGpuEnable|FALSE|BOOLEAN|0x00000029
+  giMX8TokenSpaceGuid.PcdDisplayI2CBaseAddr|0|UINT32|0x30A30000
+

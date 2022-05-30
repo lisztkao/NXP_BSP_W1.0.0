@@ -1,0 +1,130 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[version]
+Signature   = "$Windows NT$"
+Class       = Net
+ClassGUID   = {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider    =%ProviderName%
+DriverVer   = 01/18/2017,1.1
+PnpLockDown = 1
+CatalogFile = imxnetmini.cat
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+; DisplayName              Section       DeviceID
+%iMXMini.DeviceDesc%    = iMXMini.ndi, ACPI\NXP010D ; Root enumerated
+
+[iMXMini.ndi]
+Characteristics    = 0x84 ; NCF_PHYSICAL, NCF_HAS_UI
+BusType            = 15   ; PNPBus
+*IfType            = 6    ; IF_TYPE_ETHERNET_CSMACD
+*MediaType         = 13   ; NdisMedium802_3
+*PhysicalMediaType = 14   ; NdisPhysicalMedium802_3
+AddReg             = iMXMini.Reg
+AddReg             = iMXMiniBuffers.Reg
+AddReg             = iMXMiniSpeed.Reg
+CopyFiles          = iMXMini.CopyFiles
+
+[iMXMini.ndi.Services]
+AddService         = imxnetmini, 2, iMXMini.Service, iMXMini.EventLog
+
+; ENET Rx/Tx buffers
+[iMXMiniBuffers.Reg]
+HKR, Ndi\params\*ReceiveBuffers,          ParamDesc,  0, "%RxDescriptors%"
+HKR, Ndi\params\*ReceiveBuffers,          default,    0, "512"
+HKR, Ndi\params\*ReceiveBuffers,          min,        0, "3"
+HKR, Ndi\params\*ReceiveBuffers,          max,        0, "1024"
+HKR, Ndi\params\*ReceiveBuffers,          step,       0, "1"
+HKR, Ndi\params\*ReceiveBuffers,          Base,       0, "10"
+HKR, Ndi\params\*ReceiveBuffers,          type,       0, "int"
+
+HKR, Ndi\params\*TransmitBuffers,         ParamDesc,  0, "%TxDescriptors%"
+HKR, Ndi\params\*TransmitBuffers,         default,    0, "128"
+HKR, Ndi\params\*TransmitBuffers,         min,        0, "2"
+HKR, Ndi\params\*TransmitBuffers,         max,        0, "128"
+HKR, Ndi\params\*TransmitBuffers,         step,       0, "1"
+HKR, Ndi\params\*TransmitBuffers,         Base,       0, "10"
+HKR, Ndi\params\*TransmitBuffers,         type,       0, "int"
+
+; ENET speed support
+[iMXMiniSpeed.Reg]
+HKR, Ndi\params\*SpeedDuplex,             ParamDesc,  0, %SpeedDuplex%
+HKR, Ndi\params\*SpeedDuplex,             default,    0, "0"
+HKR, Ndi\params\*SpeedDuplex,             type,       0, "enum"
+HKR, Ndi\params\*SpeedDuplex\enum,        "0",        0, %AutoDetect%
+HKR, Ndi\params\*SpeedDuplex\enum,        "1",        0, %10Mb-Half-Duplex%
+HKR, Ndi\params\*SpeedDuplex\enum,        "2",        0, %10Mb-Full-Duplex%
+HKR, Ndi\params\*SpeedDuplex\enum,        "3",        0, %100Mb-Half-Duplex%
+HKR, Ndi\params\*SpeedDuplex\enum,        "4",        0, %100Mb-Full-Duplex%
+
+;-----------------------------------------------------------------------------
+; Miniport Common
+;
+[iMXMini.Reg]
+; Uncomment next this key to set MAC NetworkAddres
+; HKR,    ,                         NetworkAddress,      0, "02-ff-b4-5f-0c-11"
+HKR,    ,                         BusNumber,           0, "0"
+HKR, Ndi,                         Service,             0, "imxnetmini"
+HKR, Ndi\Interfaces,              UpperRange,          0, "ndis5"
+HKR, Ndi\Interfaces,              LowerRange,          0, "ethernet"
+
+;-----------------------------------------------------------------------------
+; Driver and Service Section
+;
+[iMXMini.CopyFiles]
+imxnetmini.sys,,,2
+
+[iMXMini.Service]
+DisplayName        = %iMXMini.SvcDesc%
+ServiceType        = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType          = 3 ;%SERVICE_DEMAND_START%
+ErrorControl       = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary      = %13%\imxnetmini.sys
+AddReg             = TextModeFlags.Reg
+
+[iMXMini.EventLog]
+AddReg             = iMXMini.AddEventLog.Reg
+
+[iMXMini.AddEventLog.Reg]
+HKR, , EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\netevent.dll"
+HKR, , TypesSupported,   0x00010001, 7
+
+[TextModeFlags.Reg]
+HKR, , TextModeFlags,    0x00010001, 0x0001
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+imxnetmini.sys  = 1,,
+
+;-----------------------------------------------------------------------------
+; DestinationDirs
+;
+[DestinationDirs]
+iMXMini.CopyFiles = 13
+DefaultDestDir     = 11
+
+;-----------------------------------------------------------------------------
+; Localizable Strings
+;
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+iMXMini.DeviceDesc           = "i.MX Ethernet Adapter"
+iMXMini.SvcDesc              = "i.MX Miniport Adapter Service"
+
+DiskId1                      = "i.MX Miniport Adapter Installation Disk #1"
+
+RxDescriptors                = "Receive Descriptors"
+TxDescriptors                = "Transmit Descriptors"
+SpeedDuplex                  = "Speed & Duplex"
+AutoDetect                   = "Auto Negotiation"
+10Mb-Half-Duplex             = "10Mbps/Half Duplex"
+10Mb-Full-Duplex             = "10Mbps/Full Duplex"
+100Mb-Half-Duplex            = "100Mbps/Half Duplex"
+100Mb-Full-Duplex            = "100Mbps/Full Duplex"

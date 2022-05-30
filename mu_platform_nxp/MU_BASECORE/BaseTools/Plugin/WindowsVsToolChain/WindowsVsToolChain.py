@@ -1,0 +1,196 @@
+# @file WindowsVsToolChain.py
+# Plugin to configure the environment for the VS2017, VS2019, and CLANGPDB tool chains.
+##
+# This plugin works in conjuncture with the tools_def
+#
+# Copyright (c) Microsoft Corporation
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+import os
+import logging
+from edk2toolext.environment.plugintypes.uefi_build_plugin import IUefiBuildPlugin
+import edk2toollib.windows.locate_tools as locate_tools
+from edk2toollib.windows.locate_tools import FindWithVsWhere
+from edk2toolext.environment import shell_environment
+from edk2toolext.environment import version_aggregator
+
+
+class WindowsVsToolChain(IUefiBuildPlugin):
+
+    def do_post_build(self, thebuilder):
+        return 0
+
+    def do_pre_build(self, thebuilder):
+        self.Logger = logging.getLogger("WindowsVsToolChain")
+        interesting_keys = ["ExtensionSdkDir", "INCLUDE", "LIB", "LIBPATH", "UniversalCRTSdkDir",
+                            "UCRTVersion", "WindowsLibPath", "WindowsSdkBinPath", "WindowsSdkDir", "WindowsSdkVerBinPath",
+                            "WindowsSDKVersion", "VCToolsInstallDir", "Path"]
+
+        #
+        # VS2017 - Follow VS2017 where there is potential for many versions of the tools.
+        # If a specific version is required then the user must set both env variables:
+        # VS150INSTALLPATH:  base install path on system to VC install dir.  Here you will find the VC folder, etc
+        # VS150TOOLVER:      version number for the VC compiler tools
+        # VS2017_PREFIX:     path to MSVC compiler folder with trailing slash (can be used instead of two vars above)
+        if thebuilder.env.GetValue("TOOL_CHAIN_TAG") == "VS2017":
+
+            # check to see if full path already configured
+            if shell_environment.GetEnvironment().get_shell_var("VS2017_PREFIX") is not None:
+                self.Logger.debug("VS2017_PREFIX is already set.")
+
+            else:
+                install_path = self._get_vs_install_path(
+                    "VS2017".lower(), "VS150INSTALLPATH")
+                vc_ver = self._get_vc_version(install_path, "VS150TOOLVER")
+
+                if install_path is None or vc_ver is None:
+                    self.Logger.error(
+                        "Failed to configure environment for VS2017")
+                    return -1
+
+                version_aggregator.GetVersionAggregator().ReportVersion(
+                    "Visual Studio Install Path", install_path, version_aggregator.VersionTypes.INFO)
+                version_aggregator.GetVersionAggregator().ReportVersion(
+                    "VC Version", vc_ver, version_aggregator.VersionTypes.TOOL)
+
+                # make VS2017_PREFIX to align with tools_def.txt
+                prefix = os.path.join(install_path, "VC",
+                                      "Tools", "MSVC", vc_ver)
+                prefix = prefix + os.path.sep
+                shell_environment.GetEnvironment().set_shell_var("VS2017_PREFIX", prefix)
+
+                shell_env = shell_environment.GetEnvironment()
+                # Use the tools lib to determine the correct values for the vars that interest us.
+                vs_vars = locate_tools.QueryVcVariables(
+                    interesting_keys, "amd64", vs_version="vs2017")
+                for (k, v) in vs_vars.items():
+                    # MU_CHANGE: [TCBZ2613] "PATH" variable overloaded that could fail .bat run due to command line too long
+                    # This fix also requires fixes from edk2-pytool-extensions 0.13.2
+                    shell_env.set_shell_var(k, v)
+                    # if k.upper() == "PATH":
+                    #     shell_env.insert_path(v)
+                    # else:
+                    #     shell_env.set_shell_var(k, v)
+
+            # now confirm it exists
+            if not os.path.exists(shell_environment.GetEnvironment().get_shell_var("VS2017_PREFIX")):
+                self.Logger.error("Path for VS2017 toolchain is invalid")
+                return -2
+
+        #
+        # VS2019 - Follow VS2019 where there is potential for many versions of the tools.
+        # If a specific version is required then the user must set both env variables:
+        # VS160INSTALLPATH:  base install path on system to VC install dir.  Here you will find the VC folder, etc
+        # VS160TOOLVER:      version number for the VC compiler tools
+        # VS2019_PREFIX:     path to MSVC compiler folder with trailing slash (can be used instead of two vars above)
+        elif thebuilder.env.GetValue("TOOL_CHAIN_TAG") == "VS2019":
+
+            # check to see if full path already configured
+            if shell_environment.GetEnvironment().get_shell_var("VS2019_PREFIX") is not None:
+                self.Logger.debug("VS2019_PREFIX is already set.")
+
+            else:
+                install_path = self._get_vs_install_path(
+                    "VS2019".lower(), "VS160INSTALLPATH")
+                vc_ver = self._get_vc_version(install_path, "VS160TOOLVER")
+
+                if install_path is None or vc_ver is None:
+                    self.Logger.error(
+                        "Failed to configure environment for VS2019")
+                    return -1
+
+                version_aggregator.GetVersionAggregator().ReportVersion(
+                    "Visual Studio Install Path", install_path, version_aggregator.VersionTypes.INFO)
+                version_aggregator.GetVersionAggregator().ReportVersion(
+                    "VC Version", vc_ver, version_aggregator.VersionTypes.TOOL)
+
+                # make VS2019_PREFIX to align with tools_def.txt
+                prefix = os.path.join(install_path, "VC",
+                                      "Tools", "MSVC", vc_ver)
+                prefix = prefix + os.path.sep
+                shell_environment.GetEnvironment().set_shell_var("VS2019_PREFIX", prefix)
+
+                shell_env = shell_environment.GetEnvironment()
+                # Use the tools lib to determine the correct values for the vars that interest us.
+                vs_vars = locate_tools.QueryVcVariables(
+                    interesting_keys, "amd64", vs_version="vs2019")
+                for (k, v) in vs_vars.items():
+                    # MU_CHANGE: [TCBZ2613] "PATH" variable overloaded that could fail .bat run due to command line too long
+                    # This fix also requires fixes from edk2-pytool-extensions 0.13.2
+                    shell_env.set_shell_var(k, v)
+                    # if k.upper() == "PATH":
+                    #     shell_env.insert_path(v)
+                    # else:
+                    #     shell_env.set_shell_var(k, v)
+
+            # now confirm it exists
+            if not os.path.exists(shell_environment.GetEnvironment().get_shell_var("VS2019_PREFIX")):
+                self.Logger.error("Path for VS2019 toolchain is invalid")
+                return -2
+
+        #
+        # CLANGPDB - Locate VS to resolve nmake dependency.  Environment is agnostic to VS version.
+        #
+        elif thebuilder.env.GetValue("TOOL_CHAIN_TAG") == "CLANGPDB":
+            if shell_environment.GetEnvironment().get_shell_var("CLANG_HOST_BIN") is not None:
+                self.Logger.debug("CLANG_HOST_BIN is already set.")
+
+            else:
+                install_path = self._get_vs_install_path(None, None)
+                vc_ver = self._get_vc_version(install_path, None)
+
+                if install_path is None or vc_ver is None:
+                    self.Logger.error("Failed to configure environment for VS")
+                    return -1
+
+                version_aggregator.GetVersionAggregator().ReportVersion(
+                    "Visual Studio Install Path", install_path, version_aggregator.VersionTypes.INFO)
+                version_aggregator.GetVersionAggregator().ReportVersion(
+                    "VC Version", vc_ver, version_aggregator.VersionTypes.TOOL)
+
+                # make path align with tools_def.txt
+                vs_host = "x86"
+                prefix = os.path.join(install_path, "VC", "Tools", "MSVC", vc_ver)
+                clang_host_bin_prefix = os.path.join(prefix, "bin", "Host%s" % vs_host, vs_host)
+
+                # now confirm it exists
+                if not os.path.exists(clang_host_bin_prefix):
+                    self.Logger.error("Path for VS toolchain is invalid")
+                    return -2
+
+                # The environment is using nmake (not make) so add "n" to the end of the path.
+                # The rest of the command is derived from definitions in tools.def.
+                shell_environment.GetEnvironment().set_shell_var("CLANG_HOST_BIN", os.path.join(clang_host_bin_prefix, "n"))
+
+        return 0
+
+    def _get_vs_install_path(self, vs_version, varname):
+        # check if already specified
+        path = shell_environment.GetEnvironment().get_shell_var(varname)
+        if(path is None):
+            # Not specified...find latest
+            (rc, path) = FindWithVsWhere(vs_version=vs_version)
+            if rc == 0 and path is not None and os.path.exists(path):
+                self.Logger.debug("Found VS instance for %s", vs_version)
+            else:
+                self.Logger.error(
+                    "Failed to find VS instance with VsWhere (%d)" % rc)
+        return path
+
+    def _get_vc_version(self, path, varname):
+        # check if already specified
+        vc_ver = shell_environment.GetEnvironment().get_shell_var(varname)
+        if (path is None):
+            self.Logger.critical(
+                "Failed to find Visual Studio tools.  Might need to check for VS install")
+            return vc_ver
+        if(vc_ver is None):
+            # Not specified...find latest
+            p2 = os.path.join(path, "VC", "Tools", "MSVC")
+            if not os.path.isdir(p2):
+                self.Logger.critical(
+                    "Failed to find VC tools.  Might need to check for VS install")
+                return vc_ver
+            vc_ver = os.listdir(p2)[-1].strip()  # get last in list
+            self.Logger.debug("Found VC Tool version is %s" % vc_ver)
+        return vc_ver

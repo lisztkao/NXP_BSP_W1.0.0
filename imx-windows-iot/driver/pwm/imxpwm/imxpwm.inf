@@ -1,0 +1,82 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = System
+ClassGUID   = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider    = %ProviderName%
+CatalogFile = imxpwm.cat ; VS requirement to have catalog file entry
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+3426 = windows cd
+
+[SourceDisksFiles]
+imxpwm.sys = 3426
+
+;*****************************************
+; Install section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Generic,NT$ARCH$
+
+[Generic.NT$ARCH$]
+%IMXPWM.DeviceDesc% = IMXPWM_Device, ACPI\NXP010E
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+[IMXPWM_Device.NT]
+CopyFiles = IMXPWM_Device.CopyFiles
+
+[IMXPWM_Device.CopyFiles]
+imxpwm.sys,,,0x100
+
+;*****************************************
+; Service installation
+;*****************************************
+
+[IMXPWM_Device.NT.Services]
+AddService = imxpwm,2,IMXPWM_Service_Inst
+
+[IMXPWM_Service_Inst]
+DisplayName    = %IMXPWM.SvcDesc%
+ServiceType    = %SERVICE_KERNEL_DRIVER%
+StartType      = %SERVICE_DEMAND_START%
+ErrorControl   = %SERVICE_ERROR_NORMAL%
+ServiceBinary  = %13%\imxpwm.sys
+
+;*****************************************
+; Device interface installation
+;*****************************************
+[IMXPWM_Device.NT.Interfaces]
+AddInterface={60824B4C-EED1-4C9C-B49C-1B961461A819},,PWM_Interface
+
+[PWM_Interface]
+AddProperty=PWM_Interface_AddProperty
+
+; Set DEVPKEY_DeviceInterface_Restricted property to false to allow UWP access
+; to the device interface without the need to be bound with device metadata.
+; If Restricted property is set to true, then only applications which are bound
+; with device metadata would be allowed access to the device interface.
+[PWM_Interface_AddProperty]
+{026e516e-b814-414b-83cd-856d6fef4822},6,0x11,,0
+
+;*****************************************
+; Strings Section
+;*****************************************
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+IMXPWM.DeviceDesc            = "i.MX PWM Device"
+IMXPWM.SvcDesc               = "i.MX PWM Device Service"
+
+
+SERVICE_KERNEL_DRIVER   = 1
+SERVICE_DEMAND_START    = 3
+SERVICE_ERROR_NORMAL    = 1

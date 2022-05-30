@@ -1,0 +1,97 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature = "$Windows NT$"
+Class = SDHost
+ClassGUID = {a0a588a4-c46f-4b37-b7ea-c82fe89870c6}
+Provider = %ProviderName%
+BootCritical = 1 ; warning 2004: Use of BootCritical directive not recommended.
+CatalogFile=imxusdhc.cat ; VS requirement to have catalog file entry
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+3426=windows cd
+
+[SourceDisksFiles]
+imxusdhc.sys = 3426
+
+;*****************************************
+; Install section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Generic,NT$ARCH$
+
+[Generic.NT$ARCH$]
+%USDHC.DeviceDesc%=USDHC_Device, ACPI\NXP0108
+
+[ControlFlags]
+BasicDriverOk=*
+ExcludeFromSelect=ACPI\NXP0108
+
+[USDHC_Device.NT]
+CopyFiles=USDHC_Device.CopyFiles
+AddReg=USDHC_Device.NT.AddReg
+
+[USDHC_Device.CopyFiles]
+imxusdhc.sys,,,0x100
+
+[USDHC_Device.NT.AddReg]
+HKR,,Driver,,"imxusdhc.sys"
+;warning 2083: Section [usdhc_device.hw] not referenced or used.
+[USDHC_Device.HW]
+AddReg=USDHC_Device.HW.AddReg
+
+[USDHC_Device.HW.AddReg]
+HKR,,UINumberDescFormat,,%SDHCSlot%
+
+;*****************************************
+; Service installation
+;*****************************************
+
+[USDHC_Device.NT.Services]
+AddService = imxusdhc,2,USDHC_Service_Inst
+
+[USDHC_Service_Inst]
+DisplayName    = %USDHC.SvcDesc%
+ServiceType    = %SERVICE_KERNEL_DRIVER%
+StartType      = %SERVICE_DEMAND_START%
+ErrorControl   = %SERVICE_ERROR_NORMAL%
+ServiceBinary  = %13%\imxusdhc.sys
+LoadOrderGroup = System Bus Extender
+AddReg         = USDHCServiceReg
+
+[USDHCServiceReg]
+HKR,,BootFlags,0x00010003,0x00000008
+HKR,Parameters,SdCmdFlags,1,    05,01, 06,01, 08,11, 09,19, 0A,19, 0D,11, \
+                                10,01, 11,01, 12,01, 17,01, 18,05, 19,05, \
+                                1A,01, 1B,01, 1C,01, \
+                                20,05, 21,05, 26,05, \
+                                2A,01, \
+                                34,02, 35,02, \
+                                37,01, 38,01, \
+                                22,01, 23,05, 24,01, 25,01
+
+HKR,Parameters,SdAppCmdFlags,1, 06,01, 0D,01, 16,01, 17,01, 33,01, \
+                                12,01, 19,01, 1A,01, 26,01, 2B,01, \
+                                2C,01, 2D,01, 2E,01, 2F,01, 30,01, 31,01
+
+;*****************************************
+; Strings Section
+;*****************************************
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+USDHC.DeviceDesc             = "i.MX uSDHC Controller"
+USDHC.SvcDesc                = "i.MX uSDHC Controller Service"
+
+
+SDHCSlot="SD Host Slot %1!u!"
+
+SERVICE_KERNEL_DRIVER   = 1
+SERVICE_DEMAND_START    = 3
+SERVICE_ERROR_NORMAL    = 1

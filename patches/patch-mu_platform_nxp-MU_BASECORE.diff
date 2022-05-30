@@ -1,0 +1,20 @@
+diff --git a/SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.c b/SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.c
+index 67321c0613..b432c3f285 100644
+--- a/SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.c
++++ b/SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.c
+@@ -980,7 +980,6 @@ Tcg2PhysicalPresenceLibProcessRequest (
+   if (EFI_ERROR (Status)) {
+     // MS_CHANGE_212735
+     // MSChange [BEGIN] - Parts of this initialization are performed in the SurfaceTpm driver.
+-    /*
+     PpiFlags.PPFlags = PcdGet32(PcdTcg2PhysicalPresenceFlags);
+     Status   = gRT->SetVariable (
+                       TCG2_PHYSICAL_PRESENCE_FLAGS_VARIABLE,
+@@ -994,7 +993,6 @@ Tcg2PhysicalPresenceLibProcessRequest (
+       return ;
+     }
+     DEBUG((DEBUG_INFO, "[TPM2] Initial physical presence flags value is 0x%x\n", PpiFlags.PPFlags));
+-    */
+     return;
+     // MSChange [END]
+   }

@@ -1,0 +1,125 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+CatalogFile=imxvpukm.cat
+DriverVer= ; stampinf will fill in driver version
+
+[DestinationDirs]
+DefaultDestDir = 13
+InstallFilesSection = 11
+
+; ================= Class section =====================
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+imxvpukm.sys  = 1,,
+imxvpumft.dll = 1
+imxomxg1.dll = 1
+imxomxg2.dll = 1
+imx-vpu-dwl.dll = 1
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%imxvpukm.DeviceDesc%=imx_vpu_km_Device, ACPI\NXP0109
+
+[imx_vpu_km_Device.NT]
+CopyFiles=Drivers_Dir,InstallFilesSection
+AddReg=imx_vpu_km_Device.NT.AddReg
+
+[InstallFilesSection]
+imxvpumft.dll,,,0x4000
+imxomxg1.dll,,,0x4000
+imxomxg2.dll,,,0x4000
+imx-vpu-dwl.dll,,,0x4000
+
+[imx_vpu_km_Device.NT.AddReg]
+;Device access
+;HKLM,Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Classes\{ADA9253B-628C-40CE-B2C1-19F489A0F3DA},Policy,0x00010001,0x00000001;
+;H.264
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{34363248-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;H.265
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{35363248-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;HEVC
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{43564548-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;VP80
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{30385056-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;VP90
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{30395056-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;MPEG-4 SP
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{5334504D-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;MPEG-4 ASP
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{3253344D-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;MPEG-4 Part 2
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{5634504D-0000-0010-8000-00AA00389B71},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;MPEG-2
+;HKLM,Software\Classes\MediaFoundation\Transforms\Preferred,{E06D8026-DB46-11CF-B4D1-00805F6CBBEA},0x00000000,{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0};
+;Set MFTFLAGS
+;HKLM,Software\Classes\MediaFoundation\Transforms\62ce7e72-4c71-4d20-b15d-452831a87d9d,MFTFLAGS,0x00010001,00000008;
+
+HKCR,CLSID\{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0},,,"i.MX VPU MFT hardware accelerator"
+HKCR,CLSID\{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0}\InprocServer32,,%REG_EXPAND_SZ%,"%%SystemRoot%%\System32\imxvpumft.dll"
+HKCR,CLSID\{8A12D5A9-69EC-4FE2-BF16-7B4C857D0DC0}\InprocServer32,ThreadingModel,,"Both"
+HKCR,MediaFoundation\Transforms\8a12d5a9-69ec-4fe2-bf16-7b4c857d0dc0,,,"i.MX VPU MFT hardware accelerator"
+HKCR,MediaFoundation\Transforms\8a12d5a9-69ec-4fe2-bf16-7b4c857d0dc0,InputTypes,%REG_BINARY%,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,48,32,36,34,00,00,10,00,80,00,00,AA,00,38,9B,71,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,48,32,36,35,00,00,10,00,80,00,00,AA,00,38,9B,71,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,48,45,56,43,00,00,10,00,80,00,00,AA,00,38,9B,71,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,56,50,38,30,00,00,10,00,80,00,00,AA,00,38,9B,71,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,56,50,39,30,00,00,10,00,80,00,00,AA,00,38,9B,71,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,26,80,6D,E0,46,DB,CF,11,B4,D1,00,80,5F,6C,BB,EA,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,4D,50,34,53,00,00,10,00,80,00,00,AA,00,38,9B,71,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,4D,34,53,32,00,00,10,00,80,00,00,AA,00,38,9B,71,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,4D,50,34,56,00,00,10,00,80,00,00,AA,00,38,9B,71
+HKCR,MediaFoundation\Transforms\8a12d5a9-69ec-4fe2-bf16-7b4c857d0dc0,OutputTypes,%REG_BINARY%,76,69,64,73,00,00,10,00,80,00,00,AA,00,38,9B,71,4E,56,31,32,00,00,10,00,80,00,00,AA,00,38,9B,71
+HKCR,MediaFoundation\Transforms\8a12d5a9-69ec-4fe2-bf16-7b4c857d0dc0,MFTFlags,%REG_DWORD%,0x00000002
+HKCR,MediaFoundation\Transforms\Categories\d6c02d4b-6833-45b4-971a-05a4b04bab91\8a12d5a9-69ec-4fe2-bf16-7b4c857d0dc0,,%FLG_ADDREG_KEYONLY%
+
+[Drivers_Dir]
+imxvpukm.sys
+
+;-------------- Service installation
+[imx_vpu_km_Device.NT.Services]
+AddService = imxvpukm,%SPSVCINST_ASSOCSERVICE%, imx_vpu_km_Service_Inst
+
+; -------------- imxvpukm driver install sections
+[imx_vpu_km_Service_Inst]
+DisplayName    = %imxvpukm.SvcDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\imxvpukm.sys
+
+; ------------- Interface installation
+[imx_vpu_km_Device.NT.Interfaces]
+AddInterface={ada9253b-628c-40ce-b2c1-19f489a0f3da},,imx_vpu_km_interface
+
+[imx_vpu_km_interface]
+AddProperty=imx_vpu_km_interface_AddProperty
+
+; Mark us as a privileged interface
+[imx_vpu_km_interface_AddProperty]
+{026e516e-b814-414b-83cd-856d6fef4822},6,0x11,,1
+
+[imx_vpu_km_Device.NT.Wdf]
+KmdfService =  imxvpukm, imx_vpu_km_wdfsect
+[imx_vpu_km_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+imxvpukm.DeviceDesc          = "i.MX VPU Device"
+imxvpukm.SvcDesc             = "i.MX VPU Device Service"
+
+
+SPSVCINST_ASSOCSERVICE= 0x00000002
+DiskName = "i.MX VPU Device Installation Disk"
+REG_EXPAND_SZ = 0x00020000
+REG_DWORD = 0x00010001
+REG_BINARY = 0x00000001
+FLG_ADDREG_KEYONLY = 0x00000010

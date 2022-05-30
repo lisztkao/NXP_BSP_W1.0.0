@@ -1,0 +1,85 @@
+## @file
+#
+#  Copyright (c) 2018 Microsoft Corporation. All rights reserved.
+#  Copyright 2019-2020 NXP
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION       = 0x0001001A
+  BASE_NAME         = iMX8PciExpress
+  FILE_GUID         = 069381A4-90DD-4476-9232-979C36A217EE
+  MODULE_TYPE       = DXE_DRIVER
+  VERSION_STRING    = 1.0
+  ENTRY_POINT       = PcieInitialize
+
+[Sources.common]
+  iMX8PciExpress.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  #IntelFrameworkPkg/IntelFrameworkPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  iMX8Pkg/iMX8Pkg.dec
+  iMXPlatformPkg/iMXPlatformPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DxeServicesTableLib
+  IoLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
+  iMXIoMuxLib
+
+[Protocols]
+
+[Pcd]
+  # PCIe 1
+  giMX8TokenSpaceGuid.PcdPcie1Enable
+  giMX8TokenSpaceGuid.PcdPcie1ControlBaseAddress
+  giMX8TokenSpaceGuid.PcdPcie1DeviceMemoryBase
+  giMX8TokenSpaceGuid.PcdPcie1DeviceMemorySize
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig0Base
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig0Size
+  giMX8TokenSpaceGuid.PcdPcie1SwitchSupport
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig1Base
+  giMX8TokenSpaceGuid.PcdPcie1DeviceConfig1Size
+  giMX8TokenSpaceGuid.PcdPcie1InternalRefClock
+  giMX8TokenSpaceGuid.PcdPcie1MaxLinkSpeed
+  giMX8TokenSpaceGuid.PcdPcie1ResetGpio
+  giMX8TokenSpaceGuid.PcdPcie1ResetGpioBankNumber
+  giMX8TokenSpaceGuid.PcdPcie1ResetGpioIoNumber
+  # PCIe 2
+  giMX8TokenSpaceGuid.PcdPcie2Enable
+  giMX8TokenSpaceGuid.PcdPcie2ControlBaseAddress
+  giMX8TokenSpaceGuid.PcdPcie2DeviceMemoryBase
+  giMX8TokenSpaceGuid.PcdPcie2DeviceMemorySize
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig0Base
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig0Size
+  giMX8TokenSpaceGuid.PcdPcie2SwitchSupport
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig1Base
+  giMX8TokenSpaceGuid.PcdPcie2DeviceConfig1Size
+  giMX8TokenSpaceGuid.PcdPcie2InternalRefClock
+  giMX8TokenSpaceGuid.PcdPcie2MaxLinkSpeed
+  giMX8TokenSpaceGuid.PcdPcie2ResetGpio
+  giMX8TokenSpaceGuid.PcdPcie2ResetGpioBankNumber
+  giMX8TokenSpaceGuid.PcdPcie2ResetGpioIoNumber
+
+[FixedPcd]
+  giMXPlatformTokenSpaceGuid.PcdGpioBankMemoryRange
+
+[Depex]
+  gEfiCpuArchProtocolGuid AND gEfiMetronomeArchProtocolGuid
+

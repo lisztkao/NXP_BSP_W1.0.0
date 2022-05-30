@@ -1,0 +1,34 @@
+[submodule "mu_platform_nxp/MU_BASECORE"]
+	path = mu_platform_nxp/MU_BASECORE
+	url = https://github.com/Microsoft/mu_basecore.git
+[submodule "mu_platform_nxp/Common/MU"]
+	path = mu_platform_nxp/Common/MU
+	url = https://github.com/Microsoft/mu_plus.git
+[submodule "mu_platform_nxp/Silicon/ARM/MU_TIANO"]
+	path = mu_platform_nxp/Silicon/ARM/MU_TIANO
+	url = https://github.com/Microsoft/mu_silicon_arm_tiano.git
+[submodule "mu_platform_nxp/Common/MU_TIANO"]
+	path = mu_platform_nxp/Common/MU_TIANO
+	url = https://github.com/Microsoft/mu_tiano_plus.git
+[submodule "mu_platform_nxp/Common/MU_OEM_SAMPLE"]
+	path = mu_platform_nxp/Common/MU_OEM_SAMPLE
+	url = https://github.com/Microsoft/mu_oem_sample.git
+[submodule "imx-mkimage"]
+	path = imx-mkimage
+	url = https://source.codeaurora.org/external/imx/imx-mkimage
+        ignore = untracked
+[submodule "imx-atf"]
+	path = imx-atf
+	url = https://source.codeaurora.org/external/imx/imx-atf
+[submodule "MSRSec"]
+	path = MSRSec
+	url = https://github.com/Microsoft/MSRSec
+[submodule "RIoT"]
+	path = RIoT
+	url = https://github.com/Microsoft/RIoT.git
+[submodule "optee_os/optee_os_arm64"]
+	path = imx-optee-os
+	url = https://source.codeaurora.org/external/imx/imx-optee-os
+[submodule "u-boots/u-boot-imx_arm64"]
+	path = uboot-imx
+	url = https://source.codeaurora.org/external/imx/uboot-imx

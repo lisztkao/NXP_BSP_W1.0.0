@@ -1,0 +1,60 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Computer
+ClassGuid={4d36e966-e325-11ce-bfc1-08002be10318}
+Provider = %ProviderName%
+DriverVer=08/15/2016,1.0.0.0
+PnPLockdown=1
+CatalogFile=HalExtiMXDma.cat
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[DestinationDirs]
+DefaultDestDir = 13 ; Driver Store
+
+[SourceDisksNames]
+3426=windows cd
+
+[SourceDisksFiles]
+HalExtiMXDma.dll    = 3426
+
+[Manufacturer]
+%ManufacturerName% = DeviceList, NT$ARCH$
+
+[DeviceList.NT$ARCH$]
+%IMX_DMA% = IMX_DMA, ACPI\NXP0111
+
+[IMX_DMA]
+AddReg = IMX_DMA_AddReg
+CopyFiles = IMX_DMA_CopyFiles
+
+[IMX_DMA_AddReg]
+HKLM,"%OSEDB%\VEN_NXPI&DEV_0111","HALExtension",,"%13%\HalExtiMXDma.dll"
+
+[IMX_DMA_CopyFiles]
+HalExtiMXDma.dll,,,0x00001000
+
+[IMX_DMA.Services]
+AddService = , %SPSVCINST_ASSOCSERVICE%
+
+[SignatureAttributes]
+HalExtiMXDma.dll=SignatureAttributes.HalExt
+
+[SignatureAttributes.HalExt]
+HalExt=true
+
+[Strings]
+
+;Non-localizable
+SPSVCINST_ASSOCSERVICE = 0x00000002
+OSEDB = "SYSTEM\CurrentControlSet\Control\OSExtensionDatabase"
+
+;Localizable
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+IMX_DMA                      = "iMX SDMA HAL Extension"

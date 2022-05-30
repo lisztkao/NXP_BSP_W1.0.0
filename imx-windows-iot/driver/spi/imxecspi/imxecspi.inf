@@ -1,0 +1,88 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+CatalogFile=imxecspi.cat ; VS requirement to have catalog file entry
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+; ================= Class section =====================
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+imxecspi.sys  = 1,,
+
+;*****************************************
+; imxecspi  Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Microsoft,NT$ARCH$
+
+; Decorated model section take precedence over undecorated 
+; ones on XP and later.
+[Microsoft.NT$ARCH$]
+%imxecspi.0001.DeviceDesc%=imx8m_ecspi_Device,ACPI\VEN_NXP&DEV_0105&REV_0001
+%imxecspi.DeviceDesc%=imxecspi_Device,ACPI\NXP0105
+
+[imxecspi_Device.NT]
+CopyFiles=Drivers_Dir
+
+[imx8m_ecspi_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+imxecspi.sys
+
+;-------------- Service installation
+[imxecspi_Device.NT.Services]
+AddService = imxecspi,%SPSVCINST_ASSOCSERVICE%, imxecspi_Service_Inst
+
+[imx8m_ecspi_Device.NT.Services]
+AddService = imxecspi,%SPSVCINST_ASSOCSERVICE%, imx8m_ecspi_Service_Inst
+
+; -------------- imxecspi driver install sections
+[imxecspi_Service_Inst]
+DisplayName    = %imxecspi.SvcDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\imxecspi.sys
+LoadOrderGroup = Extended Base
+Dependencies   = SpbCx
+AddReg         = IMXECSPI_Service_Reg
+
+[imx8m_ecspi_Service_Inst]
+DisplayName    = %imxecspi.SvcDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\imxecspi.sys
+LoadOrderGroup = Extended Base
+Dependencies   = SpbCx
+AddReg         = IMX8M_ECSPI_Service_Reg
+
+[IMXECSPI_Service_Reg]
+HKR,Parameters,ReferenceClockHz,0x00010001,0x03938700 ; 60Mhz
+
+[IMX8M_ECSPI_Service_Reg]
+HKR,Parameters,ReferenceClockHz,0x00010001,0x016e3600 ; 24Mhz
+
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+imxecspi.DeviceDesc          = "i.MX ECSPI Controller"
+imxecspi.0001.DeviceDesc     = "i.MX ECSPI Controller"
+imxecspi.SvcDesc             = "i.MX ECSPI Controller Service"
+
+
+SPSVCINST_ASSOCSERVICE= 0x00000002
+DiskId1 = "i.MX ECSPI Controller Installation Disk #1"

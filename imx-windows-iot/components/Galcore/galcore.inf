@@ -1,0 +1,131 @@
+﻿; Copyright (c) Microsoft Corporation. All rights reserved.
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+;Class=System
+;ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Class=Display
+ClassGUID={4D36E968-E325-11CE-BFC1-08002BE10318}
+Provider=%ManufacturerName%
+DriverVer=09/21/2021,26.18.10.0
+CatalogFile=galcore.cat
+
+; ================= Class section =====================
+
+[SourceDisksNames]
+0 = %DiskName%,,,""
+
+[SourceDisksFiles]
+galcore.sys = 0
+umd11.dll = 0
+vulkan.dll = 0
+libGLSLC.dll = 0
+libVSC.dll = 0
+spvconverter.dll = 0
+libGAL.dll = 0
+
+[SourceDisksFiles.arm64]
+umd11_32.dll = 0
+vulkan_32.dll = 0
+libGLSLC_32.dll = 0
+libVSC_32.dll = 0
+spvconverter_32.dll = 0
+libGAL_32.dll = 0
+
+[SourceDisksFiles.amd64]
+libEmulator.dll = 0
+
+[DestinationDirs]
+GalCore.Miniport = 12 ; drivers
+GalCore.UserMode = 11 ; system32
+GalCore.WoW = 10, SysArm32
+Emulator.UserMode = 11 ; system32
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTARM64,NTAMD64
+
+[Standard.NTARM64]
+%galcore.DeviceDesc%=galcore_Device, ACPI\VERI7000
+
+[Standard.NTAMD64]
+%galcore.DeviceDesc%=EmuGC7L_Device, EmuGC7LDevice
+
+[galcore_Device.NT]
+CopyFiles=GalCore.Miniport, GalCore.UserMode, GalCore.WoW
+AddReg=GcWddm_AddReg
+
+[EmuGC7L_Device.NT]
+CopyFiles=GalCore.Miniport, GalCore.UserMode, Emulator.UserMode
+AddReg=EmuGC7L_AddReg
+
+[GalCore.Miniport]
+galcore.sys,,,0x100
+
+[GalCore.UserMode]
+umd11.dll,,,0x4000
+vulkan.dll,,,0x4000
+libGLSLC.dll,,,0x4000
+libVSC.dll,,,0x4000
+spvconverter.dll,,,0x4000
+libGAL.dll,,,0x4000
+
+[GalCore.WoW]
+umd11.dll,umd11_32.dll,,0x4000
+vulkan.dll,vulkan_32.dll,,0x4000
+libGLSLC.dll,libGLSLC_32.dll,,0x4000
+libVSC.dll,libVSC_32.dll,,0x4000
+spvconverter.dll,spvconverter_32.dll,,0x4000
+libGAL.dll,libGAL_32.dll,,0x4000
+
+[Emulator.UserMode]
+libEmulator.dll,,,0x4000
+
+[GcWddm_AddReg]
+HKR,,UserModeDriverName,%REG_MULTI_SZ%,"<>",umd11.dll,umd11.dll,umd12.dll
+HKR,,UserModeDriverNameWow2,%REG_MULTI_SZ%,"<>",umd11.dll,umd11.dll,umd12.dll
+HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers",DisableAutoAcpiPostDeivce,%REG_DWORD%,0
+;HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager",GpuVaFirstValidAddress,%REG_DWORD%,0x1000000
+;HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager",DisableUncommitGpuVaInPagingProcess,%REG_DWORD%,1
+HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager",DirectFlipMemoryRequirement,%REG_DWORD%,32
+;HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers\Scheduler",EnablePreemption,%REG_DWORD%,0
+HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers",TdrDebugMode,%REG_DWORD%,2
+;HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers",TdrLimitCount,%REG_DWORD%,100
+HKLM,"SOFTWARE\Microsoft\XAML",ForceWARP,%REG_DWORD%,0
+
+[EmuGC7L_AddReg]
+HKR,,SoftGPUAdapter,%REG_DWORD%,1
+HKR,,UserModeDriverName,%REG_MULTI_SZ%,"<>",umd11.dll,umd11.dll,umd12.dll
+HKR,,UserModeDriverNameWow,%REG_MULTI_SZ%,"<>",umd11.dll,umd11.dll,umd12.dll
+HKLM,"SYSTEM\CurrentControlSet\Control\GraphicsDrivers",TdrDebugMode,%REG_DWORD%,1
+HKLM,"SOFTWARE\Microsoft\XAML",ForceWARP,%REG_DWORD%,1
+
+;-------------- Service installation
+[galcore_Device.NT.Services]
+AddService = galcore,%SPSVCINST_ASSOCSERVICE%, galcore_Service_Inst
+
+[EmuGC7L_Device.NT.Services]
+AddService = galcore,%SPSVCINST_ASSOCSERVICE%, galcore_Service_Inst
+
+; -------------- galcore driver install sections
+[galcore_Service_Inst]
+DisplayName    = %galcore.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\galcore.sys
+
+[Strings]
+REG_MULTI_SZ  = 0x00010000
+REG_DWORD     = 0x00010001
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="IoT"
+DiskName = "i.MX GPU Device Installation Disk"
+galcore.DeviceDesc = "i.MX GPU Device"
+galcore.SVCDESC = "i.MX GPU Device Service"
+
+

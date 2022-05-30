@@ -1,0 +1,105 @@
+; Copyright (c) Microsoft Corporation. All rights reserved.
+; Copyright 2022 NXP
+; Licensed under the MIT License.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+CatalogFile=imxuart.cat ; VS requirement to have catalog file entry
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+imxuart.sys  = 1,,
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+;*****************************************
+; imxuart Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=MSFT,NT$ARCH$
+
+[MSFT.NT$ARCH$]
+; DisplayName            Section       DeviceId
+; -----------            -------       --------
+%imxuart.DeviceDesc%= imxuart_Inst, ACPI\NXP0106    ; UART1
+%imxuart.DeviceDesc%= imxuart_Inst, ACPI\NXP0107    ; UART2-5
+%imxuart.DeviceDesc%= imx7uart_Inst, ACPI\NXP0113   ; IMX7
+
+[imxuart_Inst.NT]
+CopyFiles=Drivers_Dir
+
+[imx7uart_Inst.NT]
+CopyFiles=Drivers_Dir
+
+[imxuart_Inst.NT.HW]
+AddReg = imxuart_Device_Reg
+
+[imx7uart_Inst.NT.HW]
+AddReg = imx7uart_Device_Reg
+
+[Drivers_Dir]
+imxuart.sys
+
+[imxuart_Device_Reg]
+HKR,,RxIntermediateBufferSize,0x00010001,4096
+HKR,,RxDmaIntermediateBufferSize,0x00010001,8192
+HKR,,TxIntermediateBufferSize,0x00010001,1024
+HKR,,RxFifoThresholdUs,0x00010001,50
+HKR,,TxFifoThresholdUs,0x00010001,10
+HKR,,TxDpcThresholdUs,0x00010001,50
+HKR,,RtsTriggerLevel,0x00010001,30
+HKR,,RxDmaMinTransactionLength,0x00010001,128
+HKR,,TxDmaMinTransactionLength,0x00010001,128
+HKR,,ModuleClockFrequency,0x00010001,80000000  ; 80 Mhz (UART_CLK_ROOT)
+
+[imx7uart_Device_Reg]
+HKR,,RxIntermediateBufferSize,0x00010001,4096
+HKR,,RxDmaIntermediateBufferSize,0x00010001,8192
+HKR,,TxIntermediateBufferSize,0x00010001,1024
+HKR,,RxFifoThresholdUs,0x00010001,50
+HKR,,TxFifoThresholdUs,0x00010001,10
+HKR,,TxDpcThresholdUs,0x00010001,50
+HKR,,RtsTriggerLevel,0x00010001,30
+HKR,,RxDmaMinTransactionLength,0x00010001,128
+HKR,,TxDmaMinTransactionLength,0x00010001,128
+HKR,,ModuleClockFrequency,0x00010001,24000000  ; 24 Mhz (UART_CLK_ROOT)
+
+;-------------- Service installation
+[imxuart_Inst.NT.Services]
+AddService = imxuart, %SPSVCINST_ASSOCSERVICE%, imxuart_Service_Inst
+
+[imx7uart_Inst.NT.Services]
+AddService = imxuart, %SPSVCINST_ASSOCSERVICE%, imxuart_Service_Inst
+
+; -------------- imxuart driver install sections
+[imxuart_Service_Inst]
+DisplayName    = %imxuart.SvcDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\imxuart.sys
+LoadOrderGroup = Extended Base
+Dependencies   = SerCx2
+
+[Strings]
+ProviderName                 = "NXP"
+ManufacturerName             = "NXP Semiconductors"
+imxuart.DeviceDesc           = "i.MX UART Controller"
+imxuart.SvcDesc              = "i.MX UART Controller Service"
+
+
+; localizable strings
+DiskId1 = "i.MX UART Controller Installation Disk #1"
+
+; non-localizable strings
+SPSVCINST_ASSOCSERVICE= 0x00000002
