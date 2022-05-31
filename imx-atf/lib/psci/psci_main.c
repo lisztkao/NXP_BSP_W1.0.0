@@ -15,6 +15,7 @@
 #include <smccc.h>
 #include <string.h>
 #include "psci_private.h"
+#include <mmio.h>
 
 /*******************************************************************************
  * PSCI frontend api for servicing SMCs. Described in the PSCI spec.
@@ -359,6 +360,25 @@ int psci_features(unsigned int psci_fid)
 	return PSCI_E_SUCCESS;
 }
 
+void __dead2 imx_main_system_reset(void)
+{
+	uintptr_t wdog_base = IMX_WDOG_BASE;
+	unsigned int val;
+	/* WDOG_B reset */
+	val = mmio_read_16(wdog_base);
+#ifdef IMX_WDOG_B_RESET
+	val = (val & 0x00FF) | (7 << 2) | (1 << 0);
+#else
+	val = (val & 0x00FF) | (9 << 2) | (1 << 0);
+#endif
+	mmio_write_16(wdog_base, val);
+
+	mmio_write_16(wdog_base + 0x2, 0x5555);
+	mmio_write_16(wdog_base + 0x2, 0xaaaa);
+	while (1)
+		;
+}
+
 /*******************************************************************************
  * PSCI top level handler for servicing SMCs.
  ******************************************************************************/
@@ -434,7 +454,8 @@ u_register_t psci_smc_handler(uint32_t smc_fid,
 			break;
 
 		case PSCI_SYSTEM_RESET:
-			psci_system_reset();
+			//psci_system_reset();
+			imx_main_system_reset();
 			/* We should never return from psci_system_reset() */
 			break;
 
